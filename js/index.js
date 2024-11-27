@@ -160,10 +160,12 @@ function removeValidationClasses() {
 function validateAllInputs() {
   if (validate(productNameInput) && validate(productPriceInput) && validate(productCategoryInput) && validate(productDescriptionInput) && validate(productImageInput)) {
     addBtn.removeAttribute('disabled')
+    updateBtn.removeAttribute('disabled')
     return true;
   }
   else {
     addBtn.setAttribute('disabled', 'true');
+    updateBtn.setAttribute('disabled', 'true');
   }
 }
 productNameInput.addEventListener('input', validateAllInputs);
