@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD SYSTEM</title>
+  <link rel="stylesheet" href="css/all.min.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+  <main>
+    <section class="container w-75">
+      <h1 class="text-bg-light text-center my-3">CRUD SYSTEM</h1>
+      <div class="form-floating mb-3">
+        <input oninput="validate(this)" type="text" class="form-control" id="productName" placeholder="Product Name">
+        <span class="text-danger d-none">Start with capital character and 2 characters at least</span>
+        <label for="productName">Product Name</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input oninput="validate(this)" type="text" class="form-control" id="productPrice" placeholder="Product Price">
+        <span class="text-danger d-none">From 6000 to 60000</span>
+        <label for="productName">Product Price</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input oninput="validate(this)" list="list" type="text" class="form-control" id="productCategory" placeholder="Product Category">
+        <span class="text-danger d-none">Select from list only</span>
+        <label for="productCategory">Product Category</label>
+        <datalist id="list">
+          <option value="TV"></option>
+          <option value="Phone"></option>
+          <option value="Screen"></option>
+          <option value="Laptop"></option>
+          <option value="Electronics"></option>
+        </datalist>
+      </div>
+      <div class="form-floating mb-3">
+        <input onchange="validate(this)" accept="image/*" type="file" class="form-control" id="productImage" placeholder="Product Image">
+        <span class="text-danger d-none">File must be jpg or jpeg or png or gif</span>
+        <label for="productImage">Product Image</label>
+      </div>
+      <div class="form-floating mb-3">
+        <textarea oninput="validate(this)" type="text" class="form-control" id="productDescription" placeholder="Product Description"></textarea>
+        <span class="text-danger d-none">Enter characters between 0 and 250</span>
+        <label for="productDescription">Product Description</label>
+      </div>
+      <button disabled id="addBtn" class="btn btn-primary" onclick="addProduct()">Add Product</button>
+      <button id="updateBtn" class="btn btn-outline-warning d-none" onclick="updateProduct()">Update Product</button>
+    </section>
+    <section class="py-5">
+      <div class="container">
+        <div class="form-floating mb-3">
+          <input oninput="searchProductByName(this.value)" type="text" class="form-control" id="productSearch" placeholder="Product Search">
+          <label for="productSearch">Product Search</label>
+        </div>
+        <div class="row gy-4" id="displayProduct">
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="js/index.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
