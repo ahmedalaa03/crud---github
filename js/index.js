@@ -168,4 +168,3 @@ function validateAllInputs() {
     updateBtn.setAttribute('disabled', 'true');
   }
 }
-productDescriptionInput.addEventListener('input', validateAllInputs);
