@@ -168,8 +168,4 @@ function validateAllInputs() {
     updateBtn.setAttribute('disabled', 'true');
   }
 }
-productNameInput.addEventListener('input', validateAllInputs);
-productPriceInput.addEventListener('input', validateAllInputs);
-productCategoryInput.addEventListener('input', validateAllInputs);
 productDescriptionInput.addEventListener('input', validateAllInputs);
-productImageInput.addEventListener('change', validateAllInputs);
