@@ -3,33 +3,45 @@ var productPriceInput = document.getElementById('productPrice');
 var productCategoryInput = document.getElementById('productCategory');
 var productImageInput = document.getElementById('productImage');
 var productDescriptionInput = document.getElementById('productDescription');
+var searchInput=document.getElementById('productSearch');
 var addBtn = document.getElementById('addBtn');
 var updateBtn = document.getElementById('updateBtn');
 var productList = [];
 if (localStorage.length) {
   productList = JSON.parse(localStorage.getItem('products'));
   displayProducts(productList);
-  console.log(productList);
 }
 if (!productList.length) { document.getElementById('displayProduct').innerHTML = '<p class="text-center text-primary">No products found!</p>'; }
 function addProduct() {
   if (validateAllInputs()) {
-    customValue = Date.now()
-    products = {
-      name: productNameInput.value,
-      price: productPriceInput.value,
-      category: productCategoryInput.value,
-      Image: `images/${productImageInput.files[0]?.name}`,
-      desc: productDescriptionInput.value,
-      customValue: customValue
-    };
-    productList.push(products);
-    localStorage.setItem('products', JSON.stringify(productList));
-    clearForm();
-    displayProducts(productList);
-    removeValidationClasses();
+    customValue = Date.now();
+    var productImageFile = productImageInput.files[0];
+    if (productImageFile) {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        var imageData = event.target.result;
+        var product = {
+          name: productNameInput.value,
+          price: productPriceInput.value,
+          category: productCategoryInput.value,
+          Image: imageData,
+          desc: productDescriptionInput.value,
+          customValue: customValue
+        };
+        productList.push(product);
+        localStorage.setItem('products', JSON.stringify(productList));
+        clearForm();
+        displayProducts(productList);
+        removeValidationClasses();
+        document.getElementById('imagePreview').style.display = 'none';
+      };
+      reader.readAsDataURL(productImageFile);
+    } else {
+      alert('Please select an image file');
+    }
+  } else {
+    alert('Complete Inputs');
   }
-  else { alert('Complete Inputs'); }
 }
 function clearForm() {
   productNameInput.value = '';
@@ -37,6 +49,8 @@ function clearForm() {
   productCategoryInput.value = '';
   productImageInput.value = null;
   productDescriptionInput.value = '';
+  document.getElementById('imagePreview').src = '';
+  document.getElementById('imagePreview').style.display = 'none';
   removeValidationClasses();
 }
 function displayProducts(list) {
@@ -47,7 +61,7 @@ function displayProducts(list) {
                 <div class="text-center">
                   <img class="img-fluid" src="${list[i].Image}" alt="">
                 </div>
-                <h2>${list[i].nameHighlighted?list[i].nameHighlighted:list[i].name}</h2>
+                <h2>${list[i].nameHighlighted ? list[i].nameHighlighted : list[i].name}</h2>
                 <div class="d-flex justify-content-between">
                   <span>${list[i].price}$</span>
                   <span class="badge text-bg-secondary">${list[i].category}</span>
@@ -83,36 +97,53 @@ function editProduct(editedIndex) {
   productPriceInput.value = productList[updateIndex].price;
   productCategoryInput.value = productList[updateIndex].category;
   productDescriptionInput.value = productList[updateIndex].desc;
+  var base64Image = productList[updateIndex].Image;
+  var file = base64ToFile(base64Image, 'image.jpg');
+  var dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+  productImageInput.files = dataTransfer.files;
+  var imgPreview = document.getElementById('imagePreview');
+  imgPreview.src = base64Image;
+  document.getElementById('imagePreview').style.display = 'block';
   addBtn.classList.add('d-none');
   updateBtn.classList.remove('d-none');
 }
 function updateProduct() {
   if (validateAllInputs()) {
-    productList[updateIndex].name = productNameInput.value;
-    productList[updateIndex].price = productPriceInput.value;
-    productList[updateIndex].category = productCategoryInput.value;
-    productList[updateIndex].Image = `images/${productImageInput.files[0]?.name}`;
-    productList[updateIndex].desc = productDescriptionInput.value;
-    localStorage.setItem('products', JSON.stringify(productList));
-    clearForm();
-    displayProducts(productList);
-    addBtn.classList.remove('d-none');
-    updateBtn.classList.add('d-none');
-    removeValidationClasses();
+    var productImageFile = productImageInput.files[0];
+    if (productImageFile) {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        var imageData = event.target.result;
+        productList[updateIndex].name = productNameInput.value;
+        productList[updateIndex].price = productPriceInput.value;
+        productList[updateIndex].category = productCategoryInput.value;
+        productList[updateIndex].Image = imageData;
+        productList[updateIndex].desc = productDescriptionInput.value;
+        localStorage.setItem('products', JSON.stringify(productList));
+        clearForm();
+        addBtn.classList.remove('d-none');
+        updateBtn.classList.add('d-none');
+        removeValidationClasses();
+        console.log(searchInput.value)
+        if(searchInput.value==''){displayProducts(productList);}
+        else{searchProductByName(searchInput.value);}
+        
+      };
+      reader.readAsDataURL(productImageFile);
+    }
   }
-  else { alert('Complete Inputs'); }
 }
 function searchProductByName(keyword) {
   var matchedSearch = [];
   var regex = new RegExp(`(${keyword})`, 'gi');
   for (var i = 0; i < productList.length; i++) {
     if (productList[i].name.toLowerCase().includes(keyword.toLowerCase())) {
-      let productClone = {...productList[i]};
+      var productClone = { ...productList[i] };
       productClone.nameHighlighted = productClone.name.replace(regex, `<span class="text-danger">$1</span>`);
       matchedSearch.push(productClone);
     }
   }
-
   if (keyword === '') {
     displayProducts(productList);
   } else if (matchedSearch.length === 0) {
@@ -127,7 +158,7 @@ function validate(input) {
     productPrice: /^(?:[6-9]\d{3}(\.\d+)?|[1-5]\d{4}(\.\d+)?|60000(\.0+)?)$/,
     productCategory: /^(TV|Phone|Electronics|Screen|Laptop)$/,
     productDescription: /^[a-zA-Z]{0,250}$/,
-    productImage: /\.(jpg|jpeg|png|gif)$/i
+    productImage: /\.jpg$/i
   }
   var isValid = regex[input.id].test(input.value);
   if (input.id === 'productImage') {
@@ -162,14 +193,16 @@ function removeValidationClasses() {
   productImageInput.classList.remove('is-invalid')
 }
 function validateAllInputs() {
-  if (validate(productNameInput) && validate(productPriceInput) && validate(productCategoryInput) && validate(productDescriptionInput) && validate(productImageInput)) {
-    addBtn.removeAttribute('disabled')
-    updateBtn.removeAttribute('disabled')
+  var allFilled = productNameInput.value.trim() && productPriceInput.value.trim() && productCategoryInput.value.trim() && productDescriptionInput.value.trim() && productImageInput.files.length > 0;
+
+  if (allFilled && validate(productNameInput) && validate(productPriceInput) && validate(productCategoryInput) && validate(productDescriptionInput) && validate(productImageInput)) {
+    addBtn.removeAttribute('disabled');
+    updateBtn.removeAttribute('disabled');
     return true;
-  }
-  else {
+  } else {
     addBtn.setAttribute('disabled', 'true');
     updateBtn.setAttribute('disabled', 'true');
+    return false;
   }
 }
 productNameInput.addEventListener('input', validateAllInputs);
@@ -177,3 +210,31 @@ productPriceInput.addEventListener('input', validateAllInputs);
 productCategoryInput.addEventListener('input', validateAllInputs);
 productDescriptionInput.addEventListener('input', validateAllInputs);
 productImageInput.addEventListener('change', validateAllInputs);
+
+function base64ToFile(base64String, fileName) {
+  var byteCharacters = atob(base64String.split(',')[1]);
+  var byteArrays = [];
+  for (var offset = 0; offset < byteCharacters.length; offset++) {
+    byteArrays.push(byteCharacters.charCodeAt(offset));
+  }
+  var blob = new Blob([new Uint8Array(byteArrays)], { type: 'image/jpeg' });
+  var file = new File([blob], fileName, { type: 'image/jpeg' });
+  return file;
+}
+productImageInput.addEventListener('change', function () {
+  var file = productImageInput.files[0];
+  var maxFileSize = 2 * 1024 * 1024;
+
+  if (file && file.size <= maxFileSize && validate(productImageInput)) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById('imagePreview').src = e.target.result;
+      document.getElementById('imagePreview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    validateAllInputs();
+  } else {
+    productImageInput.value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+  }
+});

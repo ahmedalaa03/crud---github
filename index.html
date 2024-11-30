@@ -38,8 +38,9 @@
       </div>
       <div class="form-floating mb-3">
         <input onchange="validate(this)" accept="image/*" type="file" class="form-control" id="productImage" placeholder="Product Image">
-        <span class="text-danger d-none">File must be jpg or jpeg or png or gif</span>
+        <span class="text-danger d-none">Image must be jpg and smaller than 2MB</span>
         <label for="productImage">Product Image</label>
+        <img id="imagePreview" class="img-fluid mt-2" src="" alt="Image Preview" style="display: none;">
       </div>
       <div class="form-floating mb-3">
         <textarea oninput="validate(this)" type="text" class="form-control" id="productDescription" placeholder="Product Description"></textarea>
