@@ -43,24 +43,24 @@ function displayProducts(list) {
   var box = '';
   for (var i = 0; i < list.length; i++) {
     box += `<div class="col-lg-3 col-md-4 col-sm-6">
-            <div class="product bg-light p-3 rounded-3">
-            <div class="text-center">
-              <img class="img-fluid" src="${list[i].Image}" alt="">
+              <div class="product bg-light p-3 rounded-3">
+                <div class="text-center">
+                  <img class="img-fluid" src="${list[i].Image}" alt="">
+                </div>
+                <h2>${list[i].nameHighlighted?list[i].nameHighlighted:list[i].name}</h2>
+                <div class="d-flex justify-content-between">
+                  <span>${list[i].price}$</span>
+                  <span class="badge text-bg-secondary">${list[i].category}</span>
+                </div>
+                <p>${list[i].desc}</p>
+                <div class="d-flex justify-content-between">
+                  <button onclick="editProduct(${list[i].customValue})" class=" btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button onclick="deleteProduct(${list[i].customValue})" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
+                </div>
               </div>
-              <h2>${list[i].title ? list[i].title : list[i].name}</h2>
-              <div class="d-flex justify-content-between">
-                <span>${list[i].price}$</span>
-                <span class="badge text-bg-secondary">${list[i].category}</span>
-              </div>
-              <p>${list[i].desc}</p>
-              <div class="d-flex justify-content-between">
-                <button onclick="editProduct(${list[i].customValue})" class=" btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button onclick="deleteProduct(${list[i].customValue})" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
-              </div>
-            </div>
-          </div>`
+            </div>`;
   }
-  document.getElementById('displayProduct').innerHTML = box
+  document.getElementById('displayProduct').innerHTML = box;
 }
 function getIndex(customValue) {
   for (var i = 0; i < productList.length; i++) {
@@ -107,14 +107,18 @@ function searchProductByName(keyword) {
   var regex = new RegExp(`(${keyword})`, 'gi');
   for (var i = 0; i < productList.length; i++) {
     if (productList[i].name.toLowerCase().includes(keyword.toLowerCase())) {
-      productList[i].title = productList[i].name.replace(regex, `<span class="text-danger">$1</span>`);
-      matchedSearch.push(productList[i]);
+      let productClone = {...productList[i]};
+      productClone.nameHighlighted = productClone.name.replace(regex, `<span class="text-danger">$1</span>`);
+      matchedSearch.push(productClone);
     }
   }
 
-  displayProducts(matchedSearch);
-  if (matchedSearch.length === 0) {
+  if (keyword === '') {
+    displayProducts(productList);
+  } else if (matchedSearch.length === 0) {
     document.getElementById('displayProduct').innerHTML = '<p class="text-center text-danger">No products found!</p>';
+  } else {
+    displayProducts(matchedSearch);
   }
 }
 function validate(input) {
