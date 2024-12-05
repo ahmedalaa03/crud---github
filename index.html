@@ -13,19 +13,19 @@
 <body>
   <main>
     <section class="container w-75">
-      <h1 class="text-bg-light text-center my-3">CRUD SYSTEM</h1>
+      <h1 class="text-bg-light text-primary text-center my-3">CRUD SYSTEM</h1>
       <div class="form-floating mb-3">
-        <input oninput="validate(this)" type="text" class="form-control" id="productName" placeholder="Product Name">
+        <input type="text" class="form-control" id="productName" placeholder="Product Name">
         <span class="text-danger d-none">Start with capital character and 2 characters at least</span>
         <label for="productName">Product Name</label>
       </div>
       <div class="form-floating mb-3">
-        <input oninput="validate(this)" type="text" class="form-control" id="productPrice" placeholder="Product Price">
+        <input type="text" class="form-control" id="productPrice" placeholder="Product Price">
         <span class="text-danger d-none">From 6000 to 60000</span>
         <label for="productName">Product Price</label>
       </div>
       <div class="form-floating mb-3">
-        <input oninput="validate(this)" list="list" type="text" class="form-control" id="productCategory" placeholder="Product Category">
+        <input list="list" type="text" class="form-control" id="productCategory" placeholder="Product Category">
         <span class="text-danger d-none">Select from list only</span>
         <label for="productCategory">Product Category</label>
         <datalist id="list">
@@ -37,24 +37,72 @@
         </datalist>
       </div>
       <div class="form-floating mb-3">
-        <input onchange="validate(this)" accept="image/*" type="file" class="form-control" id="productImage" placeholder="Product Image">
-        <span class="text-danger d-none">Image must be jpg and smaller than 2MB</span>
+        <input accept="image/*" type="file" class="form-control" id="productImage" placeholder="Product Image">
+        <span class="text-danger d-none">Image must be jpg and 2MB or lower</span>
         <label for="productImage">Product Image</label>
-        <img id="imagePreview" class="img-fluid mt-2" src="" alt="Image Preview" style="display: none;">
+        <img id="imagePreview" class="img-fluid mt-2" src="" alt="Image Preview"
+          style="display: none;max-width: 200px;">
       </div>
       <div class="form-floating mb-3">
-        <textarea oninput="validate(this)" type="text" class="form-control" id="productDescription" placeholder="Product Description"></textarea>
+        <textarea type="text" class="form-control" id="productDescription" placeholder="Product Description"></textarea>
         <span class="text-danger d-none">Enter characters between 0 and 250</span>
         <label for="productDescription">Product Description</label>
       </div>
-      <button disabled id="addBtn" class="btn btn-primary" onclick="addProduct()">Add Product</button>
-      <button disabled id="updateBtn" class="btn btn-warning d-none" onclick="updateProduct()">Update Product</button>
+      <button disabled id="addBtn" class="btn btn-primary">Add Product</button>
+      <button disabled id="updateBtn" class="btn btn-warning d-none">Update Product</button>
     </section>
     <section class="py-5">
       <div class="container">
         <div class="form-floating mb-3">
-          <input oninput="searchProductByName(this.value)" type="text" class="form-control" id="productSearch" placeholder="Product Search">
+          <input type="search" class="form-control" id="productSearch" placeholder="Product Search">
           <label for="productSearch">Product Search</label>
+        </div>
+        <div class="d-flex mb-3">
+          <div class="me-5 w-25">
+            <label for="sortProducts" class="form-label ">Sort By:</label>
+            <select disabled id="sortProducts" class="form-select">
+              <option value="old">Default: Old to New</option>
+              <option value="new">New to Old</option>
+              <option value="asc">Price: Low to High</option>
+              <option value="desc">Price: High to Low</option>
+              <option value="az">A-Z</option>
+              <option value="za">Z-A</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <div class="form-label">Filter by Category:</div>
+            <div id="categoryFilter" class="d-flex flex-wrap">
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="TV" id="categoryTV">
+                <label class="form-check-label" for="categoryTV">TV</label>
+              </div>
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="Phone" id="categoryPhone">
+                <label class="form-check-label" for="categoryPhone">Phone</label>
+              </div>
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="Screen" id="categoryScreen">
+                <label class="form-check-label" for="categoryScreen">Screen</label>
+              </div>
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="Laptop" id="categoryLaptop">
+                <label class="form-check-label" for="categoryLaptop">Laptop</label>
+              </div>
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="Electronics" id="categoryElectronics">
+                <label class="form-check-label" for="categoryElectronics">Electronics</label>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex flex-column align-items-center">
+            <div class="form-label">Filter by Price:</div>
+            <div class="d-flex align-items-center w-100">
+              <span id="minPriceLabel">6000</span>
+              <input disabled type="range" class="form-range mx-2 priceSlider" id="minPrice" min="6000" max="60000" step="500" value="6000">
+              <input disabled type="range" class="form-range mx-2 priceSlider" id="maxPrice" min="6000" max="60000" step="500" value="60000">
+              <span id="maxPriceLabel">60000</span>
+            </div>
+          </div>
         </div>
         <div class="row gy-4" id="displayProduct">
         </div>
